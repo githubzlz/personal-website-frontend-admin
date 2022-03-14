@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
-Vue.use(Router)
-
 /* Layout */
 import Layout from '@/layout'
+
+Vue.use(Router)
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -51,88 +50,95 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '主页', icon: 'dashboard' }
     }]
   },
   {
     path: '/edit',
+    name: 'Blog',
     component: Layout,
     children: [
       {
-        path: 'index',
+        path: '/edit',
         name: 'edit',
         component: () => import('@/views/edit/index'),
-        meta: { title: '编辑', icon: 'form' }
+        meta: { title: '写博客', icon: 'el-icon-edit' }
       }
     ]
   },
-
   {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
+    path: '/blog',
+    redirect: '/blog/list',
+    name: 'Blog',
     meta: {
-      title: 'Nested',
-      icon: 'nested'
+      title: '博客管理',
+      icon: 'el-icon-collection'
     },
+    component: Layout,
     children: [
       {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
+        path: '/blog/list',
+        name: 'edit',
+        component: () => import('@/views/edit/index'),
+        meta: { title: '博客列表', icon: 'el-icon-c-scale-to-original' }
       },
       {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: 'menu2' }
+        path: '/blog/category',
+        name: 'edit',
+        component: () => import('@/views/edit/index'),
+        meta: { title: '分类管理', icon: 'el-icon-suitcase' }
+      },
+      {
+        path: '/blog/tag',
+        name: 'edit',
+        component: () => import('@/views/edit/index'),
+        meta: { title: '标签管理', icon: 'el-icon-price-tag' }
+      },
+      {
+        path: '/blog/recycle',
+        name: 'edit',
+        component: () => import('@/views/edit/index'),
+        meta: { title: '垃圾桶', icon: 'el-icon-takeaway-box' }
       }
     ]
   },
-
   {
-    path: 'external-link',
+    path: '/settings',
+    redirect: '/settings/userInfo',
+    name: 'Settings',
+    meta: {
+      title: '网站设置',
+      icon: 'el-icon-s-tools'
+    },
     component: Layout,
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: '/settings/website',
+        name: 'WebsiteEdit',
+        component: () => import('@/views/edit/index'),
+        meta: { title: '网站编辑', icon: 'el-icon-monitor' }
+      },
+      {
+        path: '/settings/blog',
+        name: 'WebsiteBlog',
+        component: () => import('@/views/edit/index'),
+        meta: { title: '文章推荐', icon: 'el-icon-set-up' }
+      }, {
+        path: '/settings/user',
+        name: 'User',
+        component: () => import('@/views/edit/index'),
+        meta: { title: '用户管理', icon: 'el-icon-postcard' }
+      }
+    ]
+  },
+  {
+    path: '/introduction',
+    component: Layout,
+    children: [
+      {
+        path: '/introduction',
+        meta: { title: '网站介绍', icon: 'el-icon-info' },
+        component: () => import('@/views/edit/index')
       }
     ]
   },
