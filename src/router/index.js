@@ -78,8 +78,8 @@ export const constantRoutes = [
     children: [
       {
         path: '/blog/list',
-        name: 'edit',
-        component: () => import('@/views/edit/index'),
+        name: 'BlogList',
+        component: () => import('@/views/blog/list/index'),
         meta: { title: '博客列表', icon: 'el-icon-c-scale-to-original' }
       },
       {
@@ -142,7 +142,6 @@ export const constantRoutes = [
       }
     ]
   },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

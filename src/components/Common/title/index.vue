@@ -1,6 +1,6 @@
 <template>
   <div class="card-title">
-    <div class="card-title-left"></div>
+    <div class="card-title-left" :style="'background-color:'+color" />
     <span class="card-title-right">{{ titleName }}</span>
   </div>
 </template>
@@ -10,6 +10,10 @@ export default {
   name: 'CardTitle',
   props: {
     titleName: {
+      type: String,
+      default: ''
+    },
+    color: {
       type: String,
       default: ''
     }

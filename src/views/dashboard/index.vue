@@ -1,52 +1,27 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-top">
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <card-title :title-name="topTitle" />
-        </div>
-        <el-row :gutter="20">
-          <el-col :span="18">
-            <el-row :gutter="20">
-              <el-col :span="6">
-                <dash-card />
-              </el-col>
-              <el-col :span="6">
-                <dash-card />
-              </el-col>
-              <el-col :span="6">
-                <dash-card />
-              </el-col>
-              <el-col :span="6">
-                <dash-card />
-              </el-col>
-            </el-row>
-          </el-col>
-          <el-col :span="6">
-            <el-card shadow="hover">
-              <el-calendar v-model="value" />
-            </el-card>
-          </el-col>
-        </el-row>
-      </el-card>
+      <div class="inline-block dashboard-top-left">
+        <dash-cards />
+      </div>
+      <div class="inline-block dashboard-top-right">
+        <dash-calendar />
+      </div>
     </div>
-    <div class="dashboard-bottom">
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <card-title :title-name="cartTitle" />
-        </div>
-      </el-card>
-    </div>
+    <el-row style="margin-top: 20px">
+      <dash-charts />
+    </el-row>
   </div>
 </template>
 
 <script>
-import CardTitle from '@/components/Common/title'
-import DashCard from '@/views/dashboard/card'
+import DashCards from '@/views/dashboard/cards'
+import DashCharts from '@/views/dashboard/charts'
+import DashCalendar from '@/views/dashboard/calendar'
 
 export default {
   name: 'Dashboard',
-  components: { DashCard, CardTitle },
+  components: { DashCalendar, DashCards, DashCharts },
   data() {
     return {
       topTitle: '博文统计',
@@ -60,14 +35,19 @@ export default {
 .dashboard {
   &-container {
     margin: 30px;
-    min-width: 1200px;
-  }
-  &-text {
-    font-size: 30px;
-    line-height: 46px;
+    position:relative;
   }
 }
-.dashboard-bottom{
-  margin-top: 20px;
+
+.dashboard-top {
+  position:relative;
+  &-left{
+    width: calc(100% - 380px - 20px);
+    vertical-align: top;
+    margin-right: 20px;
+  }
+  &-right{
+    width: 380px;
+  }
 }
 </style>
