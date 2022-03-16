@@ -4,17 +4,16 @@ import store from '@/store'
 import { getToken } from '@/utils/auth'
 
 // create an axios instance
-const service = axios.create({
+const request = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
 
 // request interceptor
-service.interceptors.request.use(
+request.interceptors.request.use(
   config => {
     // do something before request is sent
-
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
@@ -31,7 +30,7 @@ service.interceptors.request.use(
 )
 
 // response interceptor
-service.interceptors.response.use(
+request.interceptors.response.use(
   /**
    * If you want to get http information such as headers or status
    * Please return  response => response
@@ -46,7 +45,7 @@ service.interceptors.response.use(
     const res = response.data
 
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    if (res.code !== 200) {
       Message({
         message: res.message || 'Error',
         type: 'error',
@@ -82,4 +81,24 @@ service.interceptors.response.use(
   }
 )
 
-export default service
+/**
+ * 参数拼接
+ * @param obj
+ * @returns {string}
+ */
+function params(obj) {
+  let result = ''
+  let item
+  for (item in obj) {
+    if (obj[item] && String(obj[item])) {
+      result += `&${item}=${obj[item]}`
+    }
+  }
+  if (result) {
+    result = '&' + result.slice(1)
+  }
+  return result
+}
+
+export default request
+

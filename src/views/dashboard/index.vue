@@ -18,7 +18,6 @@
 import DashCards from '@/views/dashboard/cards'
 import DashCharts from '@/views/dashboard/charts'
 import DashCalendar from '@/views/dashboard/calendar'
-
 export default {
   name: 'Dashboard',
   components: { DashCalendar, DashCards, DashCharts },
@@ -27,6 +26,9 @@ export default {
       topTitle: '博文统计',
       cartTitle: '统计图标'
     }
+  },
+  created() {
+
   }
 }
 </script>

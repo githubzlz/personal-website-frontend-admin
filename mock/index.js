@@ -2,11 +2,13 @@ const Mock = require('mockjs')
 const { param2Obj } = require('./utils')
 
 const user = require('./user')
-const table = require('./table')
+const blog = require('./home/blog')
+const website = require('./home/website')
 
 const mocks = [
   ...user,
-  ...table
+  ...blog,
+  ...website
 ]
 
 // for front mock
@@ -29,6 +31,7 @@ function mockXHR() {
 
   function XHR2ExpressReqWrap(respond) {
     return function(options) {
+      console.log(options.body)
       let result = null
       if (respond instanceof Function) {
         const { body, type, url } = options
