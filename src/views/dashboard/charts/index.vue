@@ -25,8 +25,8 @@
 </template>
 
 <script>
-import { blogStatisticalTable } from '@/api/dash/blog'
-import { websiteStatisticalTable } from '@/api/dash/website'
+import { blogStatisticalTable } from '@/api/blog'
+import { websiteStatisticalTable } from '@/api/website'
 import CardTitle from '@/components/Common/title'
 export default {
   name: 'DashCharts',
@@ -74,10 +74,10 @@ export default {
       this.charts.push(this.initEcharts(resp.data, 2))
     })
     blogStatisticalTable({ state: 1 }).then(resp => {
-      this.charts.push(this.initEcharts(resp.data, 1))
+      this.charts.push(this.initEcharts(resp.data, 3))
     })
     websiteStatisticalTable({ state: 0 }).then(resp => {
-      this.charts.push(this.initEcharts(resp.data, 3))
+      this.charts.push(this.initEcharts(resp.data, 1))
     })
   },
   beforeMount() {

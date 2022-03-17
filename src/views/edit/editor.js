@@ -1,6 +1,21 @@
+import vue from '@/main'
+
+export function resize() {
+  const title = document.getElementById('blog-edit-title')
+  const navbar = document.getElementsByClassName('navbar')[0]
+  if (title && navbar) {
+    const height = title.clientHeight
+    const navbarHeight = navbar.clientHeight
+    const editor = vue.$editor.editor
+    if (editor && height && navbarHeight) {
+      editor.resize('100%', window.innerHeight - height - navbarHeight - 20)
+    }
+  }
+}
+
 export const config = {
-  width: '90%',
-  height: 740,
+  width: '100%',
+  height: 0,
   path: 'editor.md-master/lib/',
   theme: 'light',
   previewTheme: 'light',
@@ -38,13 +53,6 @@ export const config = {
   imageFormats: ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'],
   // imageUploadURL: './php/upload.php',
   onload: function() {
-    console.log('onload', this)
-    // this.fullscreen();
-    // this.unwatch();
-    // this.watch().fullscreen();
-    // this.setMarkdown("#PHP");
-    // this.width("100%");
-    // this.height(480);
-    // this.resize("100%", 640);
+    resize()
   }
 }

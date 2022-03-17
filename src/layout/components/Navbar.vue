@@ -35,7 +35,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-
+import { resize } from '@/views/edit/editor'
 export default {
   components: {
     Breadcrumb,
@@ -50,6 +50,9 @@ export default {
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
+      setTimeout(() => {
+        resize()
+      }, 200)
     },
     async logout() {
       await this.$store.dispatch('user/logout')

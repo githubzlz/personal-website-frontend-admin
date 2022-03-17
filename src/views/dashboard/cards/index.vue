@@ -23,7 +23,7 @@
 import CardTitle from '@/components/Common/title'
 import DashCard from '@/views/dashboard/cards/card'
 import DashBackLog from '@/views/dashboard/cards/backlog'
-import { blogInfo } from '@/api/dash/blog'
+import { blogInfo } from '@/api/blog'
 export default {
   name: 'DashCards',
   components: { DashBackLog, DashCard, CardTitle },

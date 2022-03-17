@@ -26,7 +26,7 @@
 
 <script>
 import ComNum from '@/views/common/num'
-import { message, backLog } from '@/api/dash/website'
+import { message, backLog } from '@/api/website'
 export default {
   name: 'DashBackLog',
   components: { ComNum },

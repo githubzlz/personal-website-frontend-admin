@@ -17,6 +17,9 @@ import '@/permission' // permission control
 
 import * as echarts from 'echarts'
 Vue.prototype.$ets = echarts
+Vue.prototype.$editor = {
+  editor: ''
+}
 
 /**
  * If you don't want to use mock-server
@@ -37,10 +40,10 @@ Vue.use(ElementUI, { locale })
 // Vue.use(ElementUI)
 
 Vue.config.productionTip = false
-
-new Vue({
+const vue = new Vue({
   el: '#app',
   router,
   store,
   render: h => h(App)
 })
+export default vue
