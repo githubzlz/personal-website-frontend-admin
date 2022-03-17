@@ -5,6 +5,8 @@ const data = Mock.mock({
     id: '1231232',
     title: '测试文章名',
     summary: '测试摘要测试摘要测试摘要测试摘要测试摘要测试摘要测试摘要',
+    provenance: 1,
+    isPublish: 0,
     categories: [
       {
         id: '1',

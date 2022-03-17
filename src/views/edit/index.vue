@@ -1,6 +1,6 @@
 <template>
   <div id="blog-edit" :v-loading="loading">
-    <edit-title />
+    <edit-title :id="blogId" />
     <div id="test-editormd-view" />
   </div>
 
@@ -17,8 +17,12 @@ export default {
     return {
       blogEditor: {},
       resizeFunc: '',
-      loading: false
+      loading: false,
+      blogId: ''
     }
+  },
+  created() {
+    this.blogId = this.$route.query.id
   },
   mounted() {
     this.createdEditor()
@@ -53,6 +57,9 @@ export default {
           }
         }
       })
+    },
+    loadingState(state) {
+      this.loading = state
     }
   }
 }

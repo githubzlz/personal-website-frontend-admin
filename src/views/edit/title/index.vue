@@ -6,86 +6,135 @@
         size="small"
         icon="el-icon-edit"
         @click="showSaveBlogDialog"
-      >保存</el-button>
+      >
+        <span v-if="edit">保存</span>
+        <span v-else>查看</span>
+      </el-button>
       <el-button type="primary" size="small" icon="el-icon-share">导出</el-button>
-      <el-button type="danger" size="small" icon="el-icon-delete">清空</el-button>
+      <el-button type="danger" size="small" icon="el-icon-delete" @click="deleteClick">
+        <span v-if="edit">清空</span>
+        <span v-else>删除</span>
+      </el-button>
     </div>
     <div class="blog-edit-title-t">
       <el-input
         v-model="blog.title"
         placeholder="请输入文章名"
-        style="font-weight: bolder;
-        font-size: 18px;"
+        maxlength="20"
+        show-word-limit
+        clearable
+        :disabled="!edit"
+        style="font-weight: bolder;font-size: 18px;"
       />
     </div>
     <el-dialog title="保存文章" :visible.sync="saveBlogDialogVisible">
-      <el-form ref="form" :model="blog" label-width="80px">
-        <el-form-item label="文章名称">
-          <el-input v-model="blog.name" />
+      <el-form ref="blogEditForm" :model="blog" label-width="80px" size="small" :disabled="!edit">
+        <el-form-item
+          label="文章名称"
+          prop="title"
+          :rules="[
+            { required: true,message: '标题不能为空',trigger: ['blur','change'] }
+          ]"
+        >
+          <el-input
+            v-model="blog.title"
+            maxlength="20"
+            show-word-limit
+            clearable
+          />
         </el-form-item>
-        <el-form-item label="文章分类">
-          <el-select v-model="blog.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai" />
-            <el-option label="区域二" value="beijing" />
+        <el-form-item
+          label="文章分类"
+          prop="category"
+          :rules="[
+            { required: true,message: '文章分类至少选择一个',trigger: ['blur','change'] }
+          ]"
+        >
+          <el-select v-model="blog.category" multiple placeholder="请选择文章分类">
+            <el-option v-for="(item,i) in categories" :key="i" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="活动时间">
-          <el-col :span="11">
-            <el-date-picker v-model="blog.date1" type="date" placeholder="选择日期" style="width: 100%;" />
-          </el-col>
-          <el-col class="line" :span="2">-</el-col>
-          <el-col :span="11">
-            <el-time-picker v-model="blog.date2" placeholder="选择时间" style="width: 100%;" />
-          </el-col>
-        </el-form-item>
-        <el-form-item label="即时配送">
-          <el-switch v-model="blog.delivery" />
-        </el-form-item>
-        <el-form-item label="活动性质">
-          <el-checkbox-group v-model="blog.type">
-            <el-checkbox label="美食/餐厅线上活动" name="type" />
-            <el-checkbox label="地推活动" name="type" />
-            <el-checkbox label="线下主题活动" name="type" />
-            <el-checkbox label="单纯品牌曝光" name="type" />
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="特殊资源">
-          <el-radio-group v-model="blog.resource">
-            <el-radio label="线上品牌商赞助" />
-            <el-radio label="线下场地免费" />
+        <el-form-item
+          label="文章来源"
+          prop="provenance"
+          :rules="[
+            { required: true,message: '来源不能为空',trigger: ['blur','change'] }
+          ]"
+        >
+          <el-radio-group v-model="blog.provenance" size="mini">
+            <el-radio-button v-for="item in provenance" :key="item.value" :label="item.value">
+              {{ item.name }}
+            </el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="活动形式">
-          <el-input v-model="blog.desc" type="textarea" />
+        <el-form-item label="是否发布">
+          <el-switch v-model="blog.isPublish" />
+        </el-form-item>
+        <el-form-item
+          label="文章摘要"
+          prop="summary"
+          :rules="[
+            { required: true,message: '摘要不能为空',trigger: ['blur','change'] }
+          ]"
+        >
+          <el-input v-model="blog.summary" type="textarea" maxlength="200" show-word-limit />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      <div v-if="edit" slot="footer" class="dialog-footer">
+        <el-button style="float: left" size="small" type="danger" @click="removeBlogInfo">清 空</el-button>
+        <el-button v-if="modify" style="float: left" size="small" type="danger" @click="cancelEdit">取消编辑</el-button>
+        <el-button size="small" @click="saveBlogDialogVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" :loading="loading" @click="editBlog">确 定</el-button>
+      </div>
+      <div v-else slot="footer" class="dialog-footer">
+        <el-button size="small" @click="saveBlogDialogVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" :loading="loading" @click="edit = true">编辑</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
 import { queryCategoryList } from '@/api/blog/category'
-
+import { editBlog, queryBlog } from '@/api/blog/blog'
 export default {
   name: 'EditTitle',
+  props: {
+    id: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
+      edit: true,
+      modify: false,
       title: '',
       saveBlogDialogVisible: false,
       formLabelWidth: '120px',
+      loading: false,
+      provenance: [
+        { name: '原创', value: 0 },
+        { name: '转载', value: 1 },
+        { name: '翻译', value: 2 }
+      ],
       blog: {
+        id: '',
         title: '',
         summary: '',
-        category: []
+        category: [],
+        provenance: '',
+        isPublish: true
       },
       categories: []
     }
   },
   created() {
     this.queryCategoryList()
+    if (this.id && this.id.length > 0) {
+      this.edit = false
+      this.modify = true
+      this.blog.id = this.id
+    }
   },
   methods: {
     showSaveBlogDialog() {
@@ -94,6 +143,66 @@ export default {
     queryCategoryList() {
       queryCategoryList().then(resp => {
         this.categories = resp.data
+      })
+    },
+    editBlog() {
+      this.$refs['blogEditForm'].validate((valid) => {
+        if (valid) {
+          this.loading = true
+          editBlog(this.blog).then(resp => {
+            if (resp.code === 200) {
+              this.saveBlogDialogVisible = false
+              this.edit = false
+              this.modify = true
+            }
+            this.loading = false
+          })
+        }
+      })
+    },
+    removeBlogInfo() {
+      this.$refs['blogEditForm'].resetFields()
+    },
+    deleteClick() {
+      const message = this.edit ? '确认清空所有已编辑数据吗?' : '确认删除此博文吗?'
+      const rsSuccessMessage = this.edit ? '数据清除成功' : '博文删除成功，您仍可以从回收站恢复此文章！'
+      this.$confirm(message, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: rsSuccessMessage
+        })
+      })
+    },
+    cancelEdit() {
+      this.$confirm('已编辑的内容都会丢失，确定取消吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.saveBlogDialogVisible = false
+        this.reloadBlog()
+      })
+    },
+    reloadBlog(id) {
+      this.$parent.loadingState(true)
+      queryBlog(id).then(resp => {
+        const blog = resp.data
+        if (blog) {
+          this.edit = false
+          this.modify = true
+          this.blog = {
+            id: blog.id,
+            title: blog.title,
+            summary: blog.summary,
+            category: blog.categories.map(cate => { return cate.id }),
+            provenance: blog.provenance,
+            isPublish: blog.isPublish === 0
+          }
+        }
       })
     }
   }
