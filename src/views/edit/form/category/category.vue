@@ -6,7 +6,14 @@
       { required: true,message: '文章分类至少选择一个',trigger: ['blur','change'] }
     ]"
   >
-    <el-select v-model="categoryChild" multiple :multiple-limit="2" filterable placeholder="请选择文章分类">
+    <el-select
+      v-model="categoryChild"
+      style="width: 100%"
+      multiple
+      :multiple-limit="2"
+      filterable
+      placeholder="请选择文章分类"
+    >
       <el-option v-for="(item,i) in categoryList" :key="i" :label="item.name" :value="item.id" />
     </el-select>
   </el-form-item>
@@ -19,7 +26,7 @@ export default {
   props: {
     categories: {
       type: Array,
-      default: []
+      default: () => { return [] }
     }
   },
   data() {

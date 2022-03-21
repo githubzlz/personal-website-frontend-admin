@@ -20,7 +20,7 @@ export const config = {
   theme: 'light',
   previewTheme: 'light',
   editorTheme: 'light',
-  markdown: '![](https://drawio-1309555906.cos.ap-beijing.myqcloud.com/drawtest.drawio.png)',
+  markdown: '',
   codeFold: true,
   // syncScrolling : false,
   saveHTMLToTextarea: true, // 保存 HTML 到 Textarea

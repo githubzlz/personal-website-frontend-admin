@@ -55,12 +55,12 @@ export const constantRoutes = [
   },
   {
     path: '/edit',
-    name: 'Blog',
+    name: 'edit',
     component: Layout,
     children: [
       {
         path: '/edit',
-        name: 'edit',
+        name: 'edit-in',
         component: () => import('@/views/edit/index'),
         meta: { title: '写博客', icon: 'el-icon-edit' }
       }
@@ -84,19 +84,19 @@ export const constantRoutes = [
       },
       {
         path: '/blog/category',
-        name: 'edit',
+        name: 'BlogCategory',
         component: () => import('@/views/edit/index'),
         meta: { title: '分类管理', icon: 'el-icon-suitcase' }
       },
       {
         path: '/blog/tag',
-        name: 'edit',
+        name: 'BlogTag',
         component: () => import('@/views/edit/index'),
         meta: { title: '标签管理', icon: 'el-icon-price-tag' }
       },
       {
         path: '/blog/recycle',
-        name: 'edit',
+        name: 'BlogRecycle',
         component: () => import('@/views/edit/index'),
         meta: { title: '垃圾桶', icon: 'el-icon-takeaway-box' }
       }

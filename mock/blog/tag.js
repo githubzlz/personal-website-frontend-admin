@@ -28,7 +28,7 @@ const data = Mock.mock({
   tagTree: [
     {
       id: '1',
-      name: 'Java',
+      name: '分类1',
       children: [
         {
           id: '11',
@@ -40,7 +40,7 @@ const data = Mock.mock({
       ]
     }, {
       id: '2',
-      name: 'Python',
+      name: '分类2',
       children: [
         {
           id: '21',
@@ -52,7 +52,19 @@ const data = Mock.mock({
       ]
     }, {
       id: '3',
-      name: 'PHP'
+      name: '分类3',
+      children: [
+        {
+          id: '31',
+          name: '人工智能'
+        }, {
+          id: '32',
+          name: 'Python'
+        }
+      ]
+    }, {
+      id: '4',
+      name: '分类4'
     }
   ]
 })

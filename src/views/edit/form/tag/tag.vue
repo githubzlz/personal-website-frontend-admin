@@ -6,38 +6,65 @@
       { required: true,message: '文章标签不能为空',trigger: ['blur','change'] }
     ]"
   >
-    <el-tag
-      v-for="tag in tagNames"
-      :key="tag"
-      closable
-      :disable-transitions="true"
-      size="small"
-      effect="dark"
-      style="margin-right: 10px; border: none"
-      type="success"
-      @close="handleTagClose(tag)"
-    >
-      {{ tag }}
-    </el-tag>
+    <template v-if="editForm">
+      <el-tag
+        v-for="tagId in tagIds"
+        :key="tagId"
+        closable
+        :disable-transitions="true"
+        size="small"
+        effect="light"
+        style="margin-right: 10px;"
+        type="success"
+        @close="handleTagClose(tagId)"
+      >
+        {{ tagMap.get(tagId) }}
+      </el-tag>
+    </template>
+    <template v-else>
+      <el-tag
+        v-for="tagId in tagIds"
+        :key="tagId"
+        :disable-transitions="true"
+        size="small"
+        effect="light"
+        style="margin-right: 10px;"
+        type="success"
+        @close="handleTagClose(tagId)"
+      >
+        {{ tagMap.get(tagId) }}
+      </el-tag>
+    </template>
+
     <el-popover
+      v-model="showAddTagsPop"
       placement="bottom-start"
       width="400"
       trigger="click"
     >
-      <div>
-        <el-input placeholder="输入标签名并回车保存" />
-        <el-collapse v-model="tagCateShow" accordion>
-          <el-collapse-item v-for="(tag,i) in tagTree" :key="tag" :title="tag.name" :name="i">
-            <el-button v-for="item in tag.children" :key="item" size="small" @click="addTag(item)">
-              {{ item.name }}
-            </el-button>
+      <el-collapse v-model="tagCateShow" accordion>
+        <template v-for="(cate,i) in tagTree">
+          <el-collapse-item v-if="cate.show" :key="cate.id" :title="cate.name" :name="i">
+            <template v-for="tag in cate.children">
+              <el-tag
+                v-if="tag.show"
+                :key="tag.id"
+                effect="plain"
+                size="small"
+                style="margin-right: 10px; cursor: pointer"
+                @click="addTag(tag.id)"
+              >
+                {{ tag.name }}
+              </el-tag>
+            </template>
           </el-collapse-item>
-        </el-collapse>
-      </div>
+        </template>
+      </el-collapse>
       <el-tag
+        id="showAddTagsButton"
         slot="reference"
         size="small"
-        effect="dark"
+        effect="light"
         style="margin-right: 10px; cursor: pointer"
       >
         +添加标签
@@ -50,54 +77,106 @@
 import { queryTagTree } from '@/api/blog/tag'
 export default {
   name: 'EditFormTag',
+  props: {
+    tags: {
+      type: Array,
+      default: () => { return [] }
+    },
+    edit: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       tagTree: [],
+      showAddTags: true,
+      showAddTagsPop: false,
+      tagIds: this.tags,
       tagMap: new Map(),
-      tagIds: [],
-      tagNames: [],
-      inputVisible: false,
-      tagCateShow: 0
+      tagCateShow: 0,
+      editForm: this.edit
     }
   },
   watch: {
-    tagNames: function(nv, ov) {
-      this.tagIds = []
-      nv.foreach(name => {
-        this.tagIds.push(this.tagMap.get(name))
-      })
+    'tags': function(newValue, oldValue) {
+      this.tagIds = newValue
+    },
+    'edit': function(newValue, oldValue) {
+      this.editForm = newValue
+      this.showAddTagsButton(newValue)
+    },
+    tagIds: function(nv, ov) {
+      if (nv.length >= 5) {
+        this.showAddTagsPop = false
+        this.showAddTagsButton(false)
+      } else {
+        this.showAddTagsButton(true)
+      }
+      this.$emit('update:tags', nv)
     }
   },
   created() {
     this.queryTagTree()
   },
+  mounted() {
+    this.showAddTagsButton(this.editForm)
+  },
   methods: {
     queryTagTree() {
+      this.showAddTags = this.tagIds.length <= 5
       queryTagTree().then(resp => {
         this.tagTree = resp.data
         if (this.tagTree) {
           this.tagTree.forEach(cate => {
-            if (cate) {
-              cate.foreach(tag => {
+            if (cate.children) {
+              cate.children.forEach(tag => {
+                cate.show = true
+                tag.show = true
+                if (this.tagIds.indexOf(tag.id) !== -1) {
+                  tag.show = false
+                }
                 this.tagMap.set(tag.id, tag.name)
-                this.tagMap.set(tag.name, tag.id)
               })
             }
           })
         }
       })
     },
-    handleTagClose(tag) {
-      this.tagNames.splice(this.tagNames.indexOf(tag), 1)
+    handleTagClose(tagId) {
+      this.tagIds.splice(this.tagIds.indexOf(tagId), 1)
+      this.updateTagShowState(tagId, true)
     },
-    addTag(item) {
-      this.tagNames.push(item.name)
+    addTag(tagId) {
+      console.log(this.tagMap)
+      if (this.tagIds.indexOf(tagId) === -1) {
+        this.tagIds.push(tagId)
+      }
+      this.updateTagShowState(tagId, false)
+      console.log(this.tagIds)
+    },
+    updateTagShowState(id, op) {
       this.tagTree.forEach(cate => {
-        const i = cate.indexOf(item.name)
-        if (i !== -1) {
-          cate.splice(i, 1)
+        let show = false
+        if (cate.children) {
+          for (let i = 0; i < cate.children.length; i++) {
+            if (cate.children[i].id === id) {
+              cate.children[i].show = op
+            }
+            if (cate.children[i].show === true) {
+              show = true
+            }
+          }
         }
+        cate.show = show
       })
+    },
+    showAddTagsButton(visible) {
+      let desc = 'inline-block'
+      if (!visible) {
+        desc = 'none'
+      }
+      document.getElementById('showAddTagsButton').style.display = desc
     }
   }
 }

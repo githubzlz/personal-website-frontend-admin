@@ -16,7 +16,8 @@
           <span v-if="edit">清空</span>
           <span v-else>删除</span>
         </el-button>
-        <edit-form :blog.sync="blog" :modify="modify" :edit="edit" :save-blog-dialog-visible.sync="saveBlogDialogVisible" />
+        <el-button v-if="!edit" type="success" size="small" icon="el-icon-chat-line-square" @click="routeToNew">新文章</el-button>
+        <edit-form :load-blog="queryBlog" :blog.sync="blog" :edit.sync="edit" :save-blog-dialog-visible.sync="saveBlogDialogVisible" />
       </div>
       <div class="blog-edit-title-t">
         <el-input
@@ -29,43 +30,54 @@
           style="font-weight: bolder;font-size: 18px;"
         />
       </div>
-      {{ blog || JSON }}
-      {{ saveBlogDialogVisible }}
     </div>
-    <editor-md />
+    <div id="editormd-view" />
   </div>
 
 </template>
 
 <script>
-
-import EditorMd from '@/views/edit/editor'
+import $ from '../../../public/editor.md-master/jquery.min'
+import { resize, config } from './editor.js'
 import EditForm from '@/views/edit/form/form'
-
+import { queryBlog } from '@/api/blog/blog'
 export default {
-  components: { EditForm, EditorMd },
+  components: { EditForm },
   data() {
     return {
+      loading: true,
       blogEditor: {},
       resizeFunc: '',
-      loading: false,
-      saveBlogDialogVisible: true,
-      blogId: '',
+      saveBlogDialogVisible: false,
       blog: {
         id: '',
         title: '',
         summary: '',
-        tags: ['1', '2'],
-        categories: ['1', '2'],
-        provenance: '',
-        isPublish: true
+        tags: [],
+        categories: [],
+        provenance: '0',
+        isPublish: true,
+        content: {
+          type: 0,
+          content: ''
+        }
       },
-      modify: false,
       edit: true
     }
   },
-  created() {
-    this.blogId = this.$route.query.id
+  mounted() {
+    if (this.$route.query.id) {
+      this.queryBlog()
+      this.edit = false
+    } else {
+      this.createdEditor('')
+      this.edit = true
+    }
+    this.drawIoPictureClick()
+    window.addEventListener('resize', resize)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', resize)
   },
   methods: {
     showSaveBlogDialog() {
@@ -85,8 +97,50 @@ export default {
         })
       })
     },
-    loadingState(state) {
-      this.loading = state
+    queryBlog() {
+      queryBlog().then(resp => {
+        this.blog = resp.data
+        this.loading = false
+        this.createdEditor(this.blog.content.content)
+      })
+    },
+    routeToNew() {
+      this.$router.push('/edit')
+      this.blog = {
+        id: '',
+        title: '',
+        summary: '',
+        tags: [],
+        categories: [],
+        provenance: '0',
+        isPublish: true
+      }
+      this.edit = true
+    },
+    createdEditor(md) {
+      config.markdown = md
+      this.blogEditor = window.editormd('editormd-view', config)
+      this.$editor.editor = this.blogEditor
+    },
+    drawIoPictureClick() {
+      $(document).dblclick(function(e) {
+        const target = $(e.target)
+        if (target) {
+          const src = target.attr('src')
+          if (src && src.indexOf('drawio') !== -1) {
+            const iframe = document.createElement('iframe')
+            document.getElementById('blog-edit').appendChild(iframe)
+            iframe.style.position = 'fixed'
+            iframe.style.left = '50%'
+            iframe.style.top = '50%'
+            iframe.style.transform = 'translate(-50%, -50%)'
+            iframe.style.height = '100%'
+            iframe.style.width = '100%'
+            iframe.style.zIndex = '999'
+            iframe.src = 'http://localhost:8080/drawio_war_exploded/#Uhttps%3A%2F%2Fdrawio-1309555906.cos.ap-beijing.myqcloud.com%2Fdrawtest.drawio'
+          }
+        }
+      })
     }
   }
 }
@@ -96,7 +150,6 @@ export default {
 #blog-edit{
   height: 100%;
   overflow: hidden;
-
 }
 .blog-edit{
   &-title-t{

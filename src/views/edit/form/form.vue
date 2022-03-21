@@ -15,18 +15,42 @@
           clearable
         />
       </el-form-item>
+      <el-form-item
+        label="文章来源"
+        prop="provenance"
+        :rules="[
+          { required: true,message: '来源不能为空',trigger: ['blur','change'] }
+        ]"
+      >
+        <el-radio-group v-model="editedBlog.provenance" size="mini">
+          <el-radio-button v-for="item in provenance" :key="item.value" :label="item.value">
+            {{ item.name }}
+          </el-radio-button>
+        </el-radio-group>
+      </el-form-item>
       <edit-form-category :categories.sync="categories" />
-      <edit-form-tag />
+      <edit-form-tag :tags.sync="tags" :edit="edit" />
+      <el-form-item
+        label="文章摘要"
+        prop="summary"
+        :rules="[
+          { required: true,message: '摘要不能为空',trigger: ['blur','change'] }
+        ]"
+      >
+        <el-input v-model="editedBlog.summary" type="textarea" maxlength="200" show-word-limit />
+      </el-form-item>
+      <el-form-item label="是否发布">
+        <el-switch v-model="editedBlog.isPublish" />
+      </el-form-item>
     </el-form>
     <div v-if="edit" slot="footer" class="dialog-footer">
       <el-button style="float: left" size="small" type="danger" @click="removeBlogInfo">清 空</el-button>
-      <el-button v-if="modify" style="float: left" size="small" type="danger" @click="cancelEdit">取消编辑</el-button>
-      <el-button size="small" @click="saveBlogDialogVisibleChild = false">取 消</el-button>
+      <el-button size="small" @click="cancelEdit">取 消</el-button>
       <el-button size="small" type="primary" @click="editBlog">确 定</el-button>
     </div>
     <div v-else slot="footer" class="dialog-footer">
-      <el-button size="small" @click="saveBlogDialogVisibleChild = false">取 消</el-button>
-      <el-button size="small" type="primary" :loading="loading" @click="edit = true">编辑</el-button>
+      <el-button size="small" @click="saveBlogDialogVisibleChild = false">关闭</el-button>
+      <el-button size="small" type="primary" @click="formEdit = true">编辑</el-button>
     </div>
   </el-dialog>
 </template>
@@ -34,6 +58,7 @@
 <script>
 import EditFormCategory from '@/views/edit/form/category/category'
 import EditFormTag from '@/views/edit/form/tag/tag'
+import { editBlog } from '@/api/blog/blog'
 export default {
   name: 'EditForm',
   components: { EditFormTag, EditFormCategory },
@@ -46,25 +71,38 @@ export default {
       type: Boolean,
       default: false
     },
-    modify: {
-      type: Boolean,
-      default: false
-    },
     saveBlogDialogVisible: {
       type: Boolean,
       default: true
+    },
+    loadBlog: {
+      type: Function,
+      default: null
     }
   },
   data() {
     return {
+      blogId: this.$route.query.id,
       editedBlog: this.blog,
       saveBlogDialogVisibleChild: this.saveBlogDialogVisible,
-      categories: this.blog.categories
+      categories: this.blog.categories,
+      tags: this.blog.tags,
+      formEdit: this.edit,
+      provenance: [
+        { name: '原创', value: 0 },
+        { name: '转载', value: 1 },
+        { name: '翻译', value: 2 }
+      ]
     }
   },
   watch: {
     'blog': function(newValue, oldValue) {
       this.editedBlog = newValue
+      this.categories = newValue.categories
+      this.tags = newValue.tags
+    },
+    'edit': function(newValue, oldValue) {
+      this.formEdit = newValue
     },
     editedBlog: function(newValue, oldValue) {
       this.$emit('update:blog', newValue)
@@ -75,21 +113,55 @@ export default {
     saveBlogDialogVisibleChild: function(newValue, oldValue) {
       this.$emit('update:saveBlogDialogVisible', newValue)
     },
+    formEdit: function(newValue, oldValue) {
+      this.$emit('update:edit', newValue)
+    },
     categories: function(newValue, oldValue) {
-      console.log(newValue)
       this.editedBlog.categories = newValue
+      this.$emit('update:blog', this.editedBlog)
+    },
+    tags: function(newValue, oldValue) {
+      this.editedBlog.tags = newValue
       this.$emit('update:blog', this.editedBlog)
     }
   },
   methods: {
     removeBlogInfo() {
-
+      this.editedBlog = {
+        id: '',
+        title: '',
+        summary: '',
+        tags: [],
+        categories: [],
+        provenance: '0',
+        isPublish: true
+      }
+      this.categories = []
+      this.tags = []
     },
     cancelEdit() {
-
+      this.$confirm('已编辑的内容都会丢失，确定取消吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.editForm = false
+        this.loadBlog()
+      })
     },
     editBlog() {
-
+      this.$refs['blogEditForm'].validate((valid) => {
+        if (valid) {
+          this.editedBlog.id = this.blogId
+          editBlog(this.editedBlog).then(resp => {
+            if (resp.code === 200) {
+              this.blogId = resp.data
+              this.saveBlogDialogVisibleChild = false
+              this.formEdit = false
+            }
+          })
+        }
+      })
     }
   }
 }

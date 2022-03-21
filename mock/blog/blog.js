@@ -8,23 +8,15 @@ const data = Mock.mock({
     provenance: 1,
     isPublish: 0,
     categories: [
-      {
-        id: '1',
-        name: 'Java'
-      }, {
-        id: '2',
-        name: 'Python'
-      }
+      '1', '2'
     ],
     tags: [
-      {
-        id: '1',
-        name: 'tag1'
-      }, {
-        id: '2',
-        name: 'tag2'
-      }
-    ]
+      '11', '21'
+    ],
+    content: {
+      type: 1,
+      content: '#12312 \n ![](https://drawio-1309555906.cos.ap-beijing.myqcloud.com/drawtest.drawio.png)'
+    }
   }
 })
 
@@ -54,7 +46,8 @@ module.exports = [
     response: config => {
       return {
         code: 200,
-        data: data.blog
+        message: 'success',
+        data: '10086'
       }
     }
   }
