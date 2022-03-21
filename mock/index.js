@@ -6,13 +6,15 @@ const blog = require('./blog')
 const website = require('./website')
 const blog2 = require('./blog/blog')
 const category = require('./blog/category')
+const tag = require('./blog/tag')
 
 const mocks = [
   ...user,
   ...blog,
   ...website,
   ...blog2,
-  ...category
+  ...category,
+  ...tag
 ]
 
 // for front mock

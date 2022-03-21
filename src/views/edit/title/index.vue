@@ -8,7 +8,7 @@
         @click="showSaveBlogDialog"
       >
         <span v-if="edit">保存</span>
-        <span v-else>查看</span>
+        <span v-else>编辑</span>
       </el-button>
       <el-button type="primary" size="small" icon="el-icon-share">导出</el-button>
       <el-button type="danger" size="small" icon="el-icon-delete" @click="deleteClick">
@@ -16,44 +16,9 @@
         <span v-else>删除</span>
       </el-button>
     </div>
-    <div class="blog-edit-title-t">
-      <el-input
-        v-model="blog.title"
-        placeholder="请输入文章名"
-        maxlength="20"
-        show-word-limit
-        clearable
-        :disabled="!edit"
-        style="font-weight: bolder;font-size: 18px;"
-      />
-    </div>
-    <el-dialog title="保存文章" :visible.sync="saveBlogDialogVisible">
+    <el-dialog title="保存文章" :visible.sync="saveBlogDialogVisible" width="600px">
       <el-form ref="blogEditForm" :model="blog" label-width="80px" size="small" :disabled="!edit">
-        <el-form-item
-          label="文章名称"
-          prop="title"
-          :rules="[
-            { required: true,message: '标题不能为空',trigger: ['blur','change'] }
-          ]"
-        >
-          <el-input
-            v-model="blog.title"
-            maxlength="20"
-            show-word-limit
-            clearable
-          />
-        </el-form-item>
-        <el-form-item
-          label="文章分类"
-          prop="category"
-          :rules="[
-            { required: true,message: '文章分类至少选择一个',trigger: ['blur','change'] }
-          ]"
-        >
-          <el-select v-model="blog.category" multiple placeholder="请选择文章分类">
-            <el-option v-for="(item,i) in categories" :key="i" :label="item.name" :value="item.id" />
-          </el-select>
-        </el-form-item>
+
         <el-form-item
           label="文章来源"
           prop="provenance"
@@ -94,7 +59,7 @@
   </div>
 </template>
 <script>
-import { queryCategoryList } from '@/api/blog/category'
+
 import { editBlog, queryBlog } from '@/api/blog/blog'
 export default {
   name: 'EditTitle',
@@ -112,6 +77,11 @@ export default {
       saveBlogDialogVisible: false,
       formLabelWidth: '120px',
       loading: false,
+      tags: [],
+      currentTag: {
+        inputVisible: false,
+        inputValue: ''
+      },
       provenance: [
         { name: '原创', value: 0 },
         { name: '转载', value: 1 },
@@ -119,8 +89,9 @@ export default {
       ],
       blog: {
         id: '',
-        title: '',
+        title: '213',
         summary: '',
+        tags: [],
         category: [],
         provenance: '',
         isPublish: true
@@ -137,12 +108,10 @@ export default {
     }
   },
   methods: {
-    showSaveBlogDialog() {
-      this.saveBlogDialogVisible = true
-    },
-    queryCategoryList() {
-      queryCategoryList().then(resp => {
-        this.categories = resp.data
+
+    queryTagTree() {
+      queryTagTree().then(resp => {
+        this.tags = resp.data
       })
     },
     editBlog() {
@@ -163,20 +132,7 @@ export default {
     removeBlogInfo() {
       this.$refs['blogEditForm'].resetFields()
     },
-    deleteClick() {
-      const message = this.edit ? '确认清空所有已编辑数据吗?' : '确认删除此博文吗?'
-      const rsSuccessMessage = this.edit ? '数据清除成功' : '博文删除成功，您仍可以从回收站恢复此文章！'
-      this.$confirm(message, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: rsSuccessMessage
-        })
-      })
-    },
+
     cancelEdit() {
       this.$confirm('已编辑的内容都会丢失，确定取消吗？', '提示', {
         confirmButtonText: '确定',
@@ -204,6 +160,15 @@ export default {
           }
         }
       })
+    },
+
+    handleTagInputConfirm() {
+      const inputValue = this.currentTag.inputValue
+      if (inputValue) {
+        this.blog.tags.push(inputValue)
+      }
+      this.currentTag.inputVisible = false
+      this.currentTag.inputValue = ''
     }
   }
 }

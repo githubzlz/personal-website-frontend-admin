@@ -1,7 +1,7 @@
 import vue from '@/main'
 
 export function resize() {
-  const title = document.getElementById('blog-edit-title')
+  const title = document.getElementById('blog-edit')
   const navbar = document.getElementsByClassName('navbar')[0]
   if (title && navbar) {
     const height = title.clientHeight
