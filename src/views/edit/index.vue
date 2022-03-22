@@ -39,7 +39,7 @@
 <script>
 import $ from '../../../public/editor.md-master/jquery.min'
 import { resize, config } from './editor.js'
-import EditForm from '@/views/edit/form/form'
+import EditForm from '@/views/edit/form/index'
 import { queryBlog } from '@/api/blog/blog'
 export default {
   components: { EditForm },
