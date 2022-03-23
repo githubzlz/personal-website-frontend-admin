@@ -136,7 +136,6 @@ export default {
       this.queryBlogList()
     },
     'params': function(n, o) {
-      this.page.pageSize = n
       this.queryBlogList()
     },
     pTotalSize: function(n, o) {
