@@ -1,6 +1,5 @@
 <template>
   <div>
-    <el-button size="small" type="primary" plain @click="createCate">新建分类</el-button>
     <el-table
       :loading="loading"
       :data="categoryList"
@@ -14,13 +13,25 @@
           {{ props.row.createdTime | formatTimer }}
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column>
+        <template slot="header">
+          <span>操作</span>
+          <el-button size="small" type="success" plain style="float: right" @click="createCate">创建新建分类</el-button>
+        </template>
         <template slot-scope="props">
           <el-button size="small" type="text" @click="updateCate(props.row.id)">修改</el-button>
           <el-divider direction="vertical" />
           <el-button size="small" type="text" @click="createChildCate(props.row.id)">创建子类</el-button>
           <el-divider direction="vertical" />
-          <el-button size="small" type="text" @click="deleteCate(props.row.id)">删除</el-button>
+          <el-popconfirm
+            confirm-button-text="删除"
+            cancel-button-text="取消"
+            icon="el-icon-info"
+            icon-color="red"
+            title="确定删除此分类吗？"
+          >
+            <el-button slot="reference" type="text">删除</el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -68,6 +79,12 @@ export default {
       return `${y}-${MM}-${d} ${h}:${m}:${s}`
     }
   },
+  props: {
+    params: {
+      type: Object,
+      default: null
+    }
+  },
   data() {
     return {
       createCateFormVisible: false,
@@ -82,8 +99,8 @@ export default {
     }
   },
   watch: {
-    title: function(n) {
-      console.log(n)
+    'params': function(n) {
+      this.queryCategoryList()
     }
   },
   created() {
@@ -92,7 +109,7 @@ export default {
   methods: {
     queryCategoryList() {
       this.loading = true
-      queryCategoryTree().then(resp => {
+      queryCategoryTree(this.params).then(resp => {
         this.loading = false
         this.categoryList = resp.data
       })
