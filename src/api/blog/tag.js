@@ -27,3 +27,29 @@ export function queryTagTree(data) {
     data
   })
 }
+
+/**
+ * 文章标签分类创建
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function createTagCate(data) {
+  return request({
+    url: `${baseUrl}/tag/cate/create`,
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 文章标签创建
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function createTag(data) {
+  return request({
+    url: `${baseUrl}/tag/create`,
+    method: 'post',
+    data
+  })
+}

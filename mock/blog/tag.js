@@ -90,5 +90,25 @@ module.exports = [
         data: data.tagTree
       }
     }
+  },
+  {
+    url: `${baseUrl}/tag/create`,
+    type: 'post',
+    response: config => {
+      return {
+        code: 200,
+        data: data.tagTree
+      }
+    }
+  },
+  {
+    url: `${baseUrl}/tag/cate/create`,
+    type: 'post',
+    response: config => {
+      return {
+        code: 200,
+        data: data.tagTree
+      }
+    }
   }
 ]

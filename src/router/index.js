@@ -91,7 +91,7 @@ export const constantRoutes = [
       {
         path: '/blog/tag',
         name: 'BlogTag',
-        component: () => import('@/views/edit/index'),
+        component: () => import('@/views/blog/tag/index'),
         meta: { title: '标签管理', icon: 'el-icon-price-tag' }
       },
       {
