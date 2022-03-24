@@ -29,30 +29,37 @@ const data = Mock.mock({
     {
       id: '1',
       name: 'Java',
+      createdTime: '1647932497781',
       children: [
         {
           id: '11',
-          name: 'Java语法'
+          name: 'Java语法',
+          createdTime: '1647932497781'
         }, {
           id: '12',
-          name: 'Java语法'
+          name: 'Java语法',
+          createdTime: '1647932497781'
         }
       ]
     }, {
       id: '2',
       name: 'Python',
+      createdTime: '1647932497781',
       children: [
         {
           id: '21',
-          name: '自然语义分析'
+          name: '自然语义分析',
+          createdTime: '1647932497781'
         }, {
           id: '22',
-          name: '机器学习'
+          name: '机器学习',
+          createdTime: '1647932497781'
         }
       ]
     }, {
       id: '3',
-      name: 'PHP'
+      name: 'PHP',
+      createdTime: '1647932497781'
     }
   ]
 })
@@ -76,6 +83,26 @@ module.exports = [
       return {
         code: 200,
         data: data.categoryTree
+      }
+    }
+  },
+  {
+    url: `${baseUrl}/category/update`,
+    type: 'post',
+    response: config => {
+      return {
+        code: 200,
+        message: 'success'
+      }
+    }
+  },
+  {
+    url: `${baseUrl}/category/delete`,
+    type: 'post',
+    response: config => {
+      return {
+        code: 200,
+        message: 'success'
       }
     }
   }

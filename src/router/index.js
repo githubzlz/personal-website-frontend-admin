@@ -85,7 +85,7 @@ export const constantRoutes = [
       {
         path: '/blog/category',
         name: 'BlogCategory',
-        component: () => import('@/views/edit/index'),
+        component: () => import('@/views/blog/category/index'),
         meta: { title: '分类管理', icon: 'el-icon-suitcase' }
       },
       {

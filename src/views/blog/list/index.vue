@@ -1,7 +1,9 @@
 <template>
   <div class="blog-list">
     <el-card>
-      <card-title title-name="文章列表" color="#6F1AE2" style="margin-bottom: 20px" />
+      <div slot="header" class="clearfix">
+        <card-title title-name="文章列表" color="#6F1AE2" />
+      </div>
       <blog-list-conditions :params.sync="params" />
       <el-divider />
       <blog-list-table :current-page.sync="currentPage" :page-size.sync="pageSize" :total-size.sync="totalSize" :params.sync="params" />
