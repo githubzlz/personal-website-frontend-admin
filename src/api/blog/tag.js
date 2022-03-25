@@ -53,3 +53,16 @@ export function createTag(data) {
     data
   })
 }
+
+/**
+ * 文章标签创建
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function deleteTag(data) {
+  return request({
+    url: `${baseUrl}/tag/remove`,
+    method: 'post',
+    data
+  })
+}

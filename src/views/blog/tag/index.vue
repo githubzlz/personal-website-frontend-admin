@@ -8,12 +8,9 @@
         <el-col :span="6">
           <blog-tag-category :query-tag-tree="queryTagTree" :tag-tree="tagTree" :tag-cate-index.sync="tagCateIndex" />
         </el-col>
-        <el-col :span="1">
-          <el-divider direction="vertical" />
-        </el-col>
-        <el-col :span="17">
+        <el-col :span="18">
           <blog-tag-condition :param.sync="param" :tag-cate-index.sync="tagCateIndex" />
-          <blog-tag-list :tag-tree="tagTree" :tag-cate-index.sync="tagCateIndex" />
+          <blog-tag-list :query-tag-tree="queryTagTree" :tag-tree="tagTree" :tag-cate-index.sync="tagCateIndex" />
         </el-col>
       </el-row>
     </el-card>

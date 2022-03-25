@@ -1,12 +1,26 @@
 <template>
-  <div>
-    <div v-for="(tag,i) in tags" :key="i">
+  <div style="padding: 30px; border-top: 1px solid rgba(0,0,0,0.1);">
+    <el-tag
+      v-for="(tag,i) in tags"
+      :key="i"
+      type="info"
+      effect="plain"
+      closable
+      :style="{ color: tag.background, marginRight: '20px' }"
+      @close="deleteTag(tag)"
+    >
       {{ tag.name }}
-    </div>
+    </el-tag>
+    <el-tag v-if="!tagNameAddVisible" type="info" effect="plain" style="width: 100px; cursor: pointer" @click="showAddInput">
+      +创建新标签
+    </el-tag>
+    <el-input v-if="tagNameAddVisible" ref="addTagInput" v-model="tagName" style="width: 100px" size="small" @blur="addTag" @keyup.enter.native="addTag" />
   </div>
 </template>
 
 <script>
+const colors = require('../../../../assets/enums/colors')
+import { createTag, deleteTag } from '@/api/blog/tag'
 export default {
   name: 'BlogTagList',
   props: {
@@ -17,38 +31,69 @@ export default {
     tagCateIndex: {
       type: Number,
       default: 0
+    },
+    queryTagTree: {
+      type: Function,
+      default: null
     }
   },
   data() {
     return {
-      tags: []
+      tags: [],
+      tagName: '',
+      tagNameAddVisible: false
     }
   },
   watch: {
     'tagTree': function(n) {
-      if (n) {
-        const cate = n[this.tagCateIndex]
-        this.tags = []
-        if (cate && cate.children) {
-          this.tags = cate.children
-        }
-      }
+      this.setTags()
     },
     'tagCateIndex': function(n) {
-      const cate = this.tagTree[n]
-      this.tags = []
-      if (cate && cate.children) {
-        this.tags = cate.children
-      }
+      this.setTags()
     }
   },
   created() {
-    const cate = this.tagTree[this.tagCateIndex]
-    this.tags = []
-    if (cate && cate.children) {
-      this.tags = cate.children
+    this.setTags()
+  },
+  methods: {
+    setTags() {
+      const cate = this.tagTree[this.tagCateIndex]
+      this.tags = []
+      if (cate && cate.children) {
+        this.tags = cate.children
+        this.tags.forEach(tag => {
+          tag.background = this.randomColor()
+        })
+      }
+    },
+    deleteTag() {
+      deleteTag().then(resp => {
+        this.queryTagTree()
+      })
+    },
+    randomColor() {
+      const r = parseInt(Math.random() * colors.length)
+      return colors[r]
+    },
+    showAddInput() {
+      this.tagNameAddVisible = true
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.$refs.addTagInput.focus()
+        }, 10)
+      })
+    },
+    addTag() {
+      this.tagNameAddVisible = false
+      if (this.tagName && this.tagName !== '') {
+        const cate = this.tagTree[this.tagCateIndex]
+        createTag({ cateId: cate.id }).then(resp => {
+          this.tagName = ''
+        })
+      }
     }
   }
+
 }
 </script>
 

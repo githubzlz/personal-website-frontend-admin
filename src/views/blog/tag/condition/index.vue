@@ -1,16 +1,12 @@
 <template>
-  <el-form>
-    <el-row :gutter="20">
-      <el-col :span="18">
-        <el-form-item label="分类名称" label-width="80px">
-          <el-input v-model="name" size="small" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="6">
-        <el-button size="small" type="primary" plain round @click="queryTagTree">搜索</el-button>
-        <el-button size="small" type="warning" plain round @click="removeForm">清空</el-button>
-      </el-col>
-    </el-row>
+  <el-form style="padding: 20px">
+    <el-form-item label="分类名称" label-width="80px">
+      <el-input v-model="name" size="small" />
+    </el-form-item>
+    <div style="margin-left: 20px">
+      <el-button size="small" type="warning" plain round @click="removeForm">清空</el-button>
+      <el-button size="small" type="primary" plain round @click="queryTagTree">搜索</el-button>
+    </div>
   </el-form>
 </template>
 

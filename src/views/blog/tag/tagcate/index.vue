@@ -1,21 +1,19 @@
 <template>
-  <div>
-    <div style="height: 50px;">
-      <el-button type="text">创建标签</el-button>
-    </div>
+  <div style="border-right: 1px solid rgba(0,0,0,0.1); padding: 10px">
+    <div style="color: rgba(0,0,0,0.5); font-weight: bolder; margin-bottom: 10px">分类：</div>
     <div v-for="(cate, i) in mTagTree" :id="`blog-tag-cate-item-${i}`" :key="i" class="blog-tag-cate-item" @click="active = i">
       {{ cate.name }}
     </div>
     <div style="text-align: center; margin-top: 20px">
       <el-input v-if="createCateVisible" v-model="cateName" />
-      <el-button v-if="createCateVisible" type="text" size="small" @click="createCate">确定</el-button>
-      <el-button v-if="!createCateVisible" type="text" size="small" @click="createCateVisible = true">新增分类</el-button>
+      <el-button v-if="createCateVisible" type="text" @click="createCate">确定</el-button>
+      <el-button v-if="!createCateVisible" type="text" size="small" @click="createCateVisible = true;createTagVisible= false">新增分类</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import { createTag, createTagCate } from '@/api/blog/tag'
+import { createTagCate } from '@/api/blog/tag'
 export default {
   name: 'BlogTagCategory',
   props: {
@@ -74,6 +72,13 @@ export default {
       if (activeItem) {
         activeItem.style.background = '#c8e7f3'
       }
+    },
+    createTag() {
+      createTag().then(resp => {
+        this.createTagVisible = false
+        this.tagName = ''
+        this.queryTagTree()
+      })
     },
     createCate() {
       const data = {

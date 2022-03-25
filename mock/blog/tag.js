@@ -122,5 +122,15 @@ module.exports = [
         data: data.tagTree
       }
     }
+  },
+  {
+    url: `${baseUrl}/tag/remove`,
+    type: 'post',
+    response: config => {
+      return {
+        code: 200,
+        data: data.tagTree
+      }
+    }
   }
 ]
