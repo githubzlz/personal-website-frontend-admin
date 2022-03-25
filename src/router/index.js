@@ -97,7 +97,7 @@ export const constantRoutes = [
       {
         path: '/blog/recycle',
         name: 'BlogRecycle',
-        component: () => import('@/views/edit/index'),
+        component: () => import('@/views/blog/recycle/index'),
         meta: { title: '垃圾桶', icon: 'el-icon-takeaway-box' }
       }
     ]

@@ -26,6 +26,7 @@ const data = Mock.mock({
       {
         'id|+1': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         title: '测试文章名',
+        imgSrc: 'https://drawio-1309555906.cos.ap-beijing.myqcloud.com/blogback.jpg',
         author: 'zlz',
         'stars|200-1000': 0,
         'readings|1540-9999': 0,
