@@ -38,7 +38,7 @@ export const constantRoutes = [
 
   {
     path: '/404',
-    component: () => import('@/views/404'),
+    component: () => import('@/views/error/404'),
     hidden: true
   },
 
@@ -114,19 +114,19 @@ export const constantRoutes = [
     children: [
       {
         path: '/settings/website',
-        name: 'WebsiteEdit',
-        component: () => import('@/views/edit/index'),
+        name: 'SettingsWebsite',
+        component: () => import('@/views/settings/website'),
         meta: { title: '网站编辑', icon: 'el-icon-monitor' }
       },
       {
         path: '/settings/blog',
-        name: 'WebsiteBlog',
-        component: () => import('@/views/edit/index'),
+        name: 'SettingsBlog',
+        component: () => import('@/views/settings/blog'),
         meta: { title: '文章推荐', icon: 'el-icon-set-up' }
       }, {
         path: '/settings/user',
-        name: 'User',
-        component: () => import('@/views/edit/index'),
+        name: 'SettingsUser',
+        component: () => import('@/views/settings/user'),
         meta: { title: '用户管理', icon: 'el-icon-postcard' }
       }
     ]

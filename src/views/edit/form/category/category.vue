@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     queryCategoryList() {
-      queryCategoryList().then(resp => {
+      queryCategoryList({ name: '' }).then(resp => {
         this.categoryList = resp.data
       })
     }

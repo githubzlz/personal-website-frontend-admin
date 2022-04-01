@@ -45,7 +45,7 @@ request.interceptors.response.use(
     const res = response.data
 
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 200) {
+    if (res.code !== 1) {
       Message({
         message: res.message || 'Error',
         type: 'error',
@@ -86,19 +86,19 @@ request.interceptors.response.use(
  * @param obj
  * @returns {string}
  */
-function params(obj) {
-  let result = ''
-  let item
-  for (item in obj) {
-    if (obj[item] && String(obj[item])) {
-      result += `&${item}=${obj[item]}`
-    }
-  }
-  if (result) {
-    result = '&' + result.slice(1)
-  }
-  return result
-}
+// function params(obj) {
+//   let result = ''
+//   let item
+//   for (item in obj) {
+//     if (obj[item] && String(obj[item])) {
+//       result += `&${item}=${obj[item]}`
+//     }
+//   }
+//   if (result) {
+//     result = '&' + result.slice(1)
+//   }
+//   return result
+// }
 
 export default request
 
