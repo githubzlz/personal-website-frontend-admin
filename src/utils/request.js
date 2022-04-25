@@ -34,7 +34,7 @@ request.interceptors.response.use(
   /**
    * If you want to get http information such as headers or status
    * Please return  response => response
-  */
+   */
 
   /**
    * Determine the request status by custom code
@@ -67,7 +67,11 @@ request.interceptors.response.use(
       }
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
-      return res
+      return {
+        code: res.code,
+        data: res.entity,
+        message: res.message
+      }
     }
   },
   error => {

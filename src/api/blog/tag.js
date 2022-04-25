@@ -23,7 +23,7 @@ export function queryTagList(data) {
 export function queryTagTree(data) {
   return request({
     url: `${baseUrl}/tag/tree`,
-    method: 'post',
+    method: 'get',
     data
   })
 }
@@ -35,7 +35,7 @@ export function queryTagTree(data) {
  */
 export function createTagCate(data) {
   return request({
-    url: `${baseUrl}/tag/cate/create`,
+    url: `${baseUrl}/tag/create/cate`,
     method: 'post',
     data
   })
@@ -61,7 +61,7 @@ export function createTag(data) {
  */
 export function deleteTag(data) {
   return request({
-    url: `${baseUrl}/tag/remove`,
+    url: `${baseUrl}/tag/delete`,
     method: 'post',
     data
   })

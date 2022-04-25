@@ -43,13 +43,12 @@ export function updateCategory(data) {
 
 /**
  * 删除文章分类
- * @param data
+ * @param id
  * @returns {AxiosPromise}
  */
-export function deleteCategory(data) {
+export function deleteCategory(id) {
   return request({
-    url: `${baseUrl}/category/delete`,
-    method: 'post',
-    data
+    url: `${baseUrl}/category/delete/${id}`,
+    method: 'get'
   })
 }

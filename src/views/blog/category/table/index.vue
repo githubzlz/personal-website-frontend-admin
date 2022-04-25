@@ -6,32 +6,35 @@
       row-key="id"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column prop="id" label="ID" />
-      <el-table-column prop="name" label="分类名" />
+      <el-table-column prop="data.levelCode" label="编码" />
+      <el-table-column prop="data.level" label="层级" />
+      <el-table-column prop="data.name" label="分类名" />
       <el-table-column label="创建日期">
         <template slot-scope="props">
-          {{ props.row.createdTime | formatTimer }}
+          {{ props.row.data.createdTime }}
         </template>
       </el-table-column>
       <el-table-column>
         <template slot="header">
           <span>操作</span>
-          <el-button size="small" type="success" plain style="float: right" @click="createCate">创建新建分类</el-button>
+          <el-button size="small" type="success" plain style="float: right" @click="createCate">新建分类</el-button>
         </template>
         <template slot-scope="props">
-          <el-button size="small" type="text" @click="updateCate(props.row.id)">修改</el-button>
+          <el-button size="small" type="text" @click="updateCate(props.row)">修改</el-button>
           <el-divider direction="vertical" />
           <el-button size="small" type="text" @click="createChildCate(props.row.id)">创建子类</el-button>
           <el-divider direction="vertical" />
-          <el-popconfirm
-            confirm-button-text="删除"
-            cancel-button-text="取消"
-            icon="el-icon-info"
-            icon-color="red"
-            title="确定删除此分类吗？"
+          <el-popover
+            v-model="props.row.deletePopVisible"
+            placement="top"
           >
-            <el-button slot="reference" type="text">删除</el-button>
-          </el-popconfirm>
+            <p>确定删除此分类吗？</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="props.row.deletePopVisible = false">取消</el-button>
+              <el-button type="text" size="mini" style="color: #db3f3f" @click="deleteCate(props.row)">删除</el-button>
+            </div>
+            <el-button slot="reference" type="text" size="small">删除</el-button>
+          </el-popover>
         </template>
       </el-table-column>
     </el-table>
@@ -93,6 +96,7 @@ export default {
         name: '',
         parentId: ''
       },
+      deletePopVisible: false,
       categoryList: [],
       loading: true,
       title: '创建分类'
@@ -115,22 +119,34 @@ export default {
       })
     },
     createCate() {
+      this.cateCreateForm = {
+        id: '',
+        name: '',
+        parentId: ''
+      }
       this.title = '创建分类'
       this.createCateFormVisible = true
     },
     createChildCate(pid) {
+      this.cateCreateForm = {
+        id: '',
+        name: '',
+        parentId: ''
+      }
       this.title = '创建子类'
       this.createCateFormVisible = true
       this.cateCreateForm.parentId = pid
     },
-    updateCate(id) {
+    updateCate(cate) {
+      this.cateCreateForm.id = cate.id
+      this.cateCreateForm.name = cate.name
       this.title = '修改分类信息'
       this.createCateFormVisible = true
-      this.cateCreateForm.id = id
     },
-    deleteCate(cateId) {
-      deleteCategory({ id: cateId }).then(resp => {
-
+    deleteCate(row) {
+      row.deletePopVisible = false
+      deleteCategory(row.id).then(resp => {
+        this.queryCategoryList()
       })
     },
     doUpdateCate() {
@@ -138,6 +154,7 @@ export default {
         if (valid) {
           updateCategory(this.cateCreateForm).then(resp => {
             this.createCateFormVisible = false
+            this.queryCategoryList()
           })
         }
       })

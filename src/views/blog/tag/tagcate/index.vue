@@ -1,25 +1,40 @@
 <template>
   <div style="border-right: 1px solid rgba(0,0,0,0.1); padding: 10px">
     <div style="color: rgba(0,0,0,0.5); font-weight: bolder; margin-bottom: 10px">分类：</div>
-    <div v-for="(cate, i) in mTagTree" :id="`blog-tag-cate-item-${i}`" :key="i" class="blog-tag-cate-item" @click="active = i">
+    <div
+      v-for="(cate, i) in mTagTree"
+      :id="`blog-tag-cate-item-${i}`"
+      :key="i"
+      class="blog-tag-cate-item"
+      @click="active = i"
+    >
       {{ cate.name }}
     </div>
     <div style="text-align: center; margin-top: 20px">
       <el-input v-if="createCateVisible" v-model="cateName" />
       <el-button v-if="createCateVisible" type="text" @click="createCate">确定</el-button>
-      <el-button v-if="!createCateVisible" type="text" size="small" @click="createCateVisible = true;createTagVisible= false">新增分类</el-button>
+      <el-button
+        v-if="!createCateVisible"
+        type="text"
+        size="small"
+        @click="createCateVisible = true;createTagVisible= false"
+      >新增分类
+      </el-button>
     </div>
   </div>
 </template>
 
 <script>
 import { createTagCate } from '@/api/blog/tag'
+
 export default {
   name: 'BlogTagCategory',
   props: {
     tagTree: {
       type: Array,
-      default: () => { return [] }
+      default: () => {
+        return []
+      }
     },
     tagCateIndex: {
       type: Number,
@@ -44,21 +59,18 @@ export default {
     },
     'tagTree': function(n) {
       this.mTagTree = n
+      if (this.active === undefined || this.active === 0) {
+        this.$nextTick(() => {
+          setTimeout(() => {
+            this.setActiveItem(0)
+          }, 10)
+        })
+      }
     },
     active: function(n) {
       this.setActiveItem(n)
       this.$emit('update:tagCateIndex', n)
     }
-  },
-  created() {
-
-  },
-  mounted() {
-    this.$nextTick(() => {
-      setTimeout(() => {
-        this.setActiveItem(this.active)
-      }, 10)
-    })
   },
   methods: {
     setActiveItem() {
@@ -72,13 +84,6 @@ export default {
       if (activeItem) {
         activeItem.style.background = '#c8e7f3'
       }
-    },
-    createTag() {
-      createTag().then(resp => {
-        this.createTagVisible = false
-        this.tagName = ''
-        this.queryTagTree()
-      })
     },
     createCate() {
       const data = {
@@ -95,10 +100,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.blog-tag-cate-item{
-  &:hover{
+.blog-tag-cate-item {
+  &:hover {
     background-color: #f2f8fa;
   }
+
   color: #626066;
   border-radius: 2px;
   line-height: 30px;
