@@ -40,16 +40,17 @@
         <el-input v-model="editedBlog.summary" type="textarea" maxlength="200" show-word-limit />
       </el-form-item>
       <el-form-item label="是否发布">
-        <el-switch v-model="editedBlog.isPublish" />
+        <el-switch v-model="isPublishSwitch" />
       </el-form-item>
     </el-form>
     <div v-if="edit" slot="footer" class="dialog-footer">
       <el-button style="float: left" size="small" type="danger" @click="removeBlogInfo">清 空</el-button>
-      <el-button size="small" @click="cancelEdit">取 消</el-button>
+
+      <el-button size="small" @click="saveBlogDialogVisibleChild = false">关闭</el-button>
       <el-button size="small" type="primary" @click="editBlog">确 定</el-button>
     </div>
     <div v-else slot="footer" class="dialog-footer">
-      <el-button size="small" @click="saveBlogDialogVisibleChild = false">关闭</el-button>
+      <el-button size="small" @click="cancelEdit">取 消</el-button>
       <el-button size="small" type="primary" @click="formEdit = true">编辑</el-button>
     </div>
   </el-dialog>
@@ -59,6 +60,7 @@
 import EditFormCategory from '@/views/edit/form/category/category'
 import EditFormTag from '@/views/edit/form/tag/tag'
 import { editBlog } from '@/api/blog/blog'
+
 export default {
   name: 'EditForm',
   components: { EditFormTag, EditFormCategory },
@@ -82,6 +84,7 @@ export default {
   },
   data() {
     return {
+      isPublishSwitch: true,
       blogId: this.$route.query.id,
       editedBlog: this.blog,
       saveBlogDialogVisibleChild: this.saveBlogDialogVisible,
@@ -96,15 +99,20 @@ export default {
     }
   },
   watch: {
+    isPublishSwitch: function(newValue, oldValue) {
+      this.editedBlog.isPublish = newValue ? 0 : 1
+    },
     'blog': function(newValue, oldValue) {
       this.editedBlog = newValue
       this.categories = newValue.categories
       this.tags = newValue.tags
+      this.isPublishSwitch = newValue.isPublish === 0
     },
     'edit': function(newValue, oldValue) {
       this.formEdit = newValue
     },
     editedBlog: function(newValue, oldValue) {
+      newValue.isPublish = this.isPublishSwitch ? 0 : 1
       this.$emit('update:blog', newValue)
     },
     'saveBlogDialogVisible': function(newValue, oldValue) {
@@ -134,7 +142,11 @@ export default {
         tags: [],
         categories: [],
         provenance: '0',
-        isPublish: true
+        isPublish: 0,
+        blogContent: {
+          content: '',
+          editorType: 0
+        }
       }
       this.categories = []
       this.tags = []
@@ -153,8 +165,9 @@ export default {
       this.$refs['blogEditForm'].validate((valid) => {
         if (valid) {
           this.editedBlog.id = this.blogId
+          this.editedBlog.blogContent.content = this.$editor.editor.getMarkdown()
           editBlog(this.editedBlog).then(resp => {
-            if (resp.code === 200) {
+            if (resp.code === 1) {
               this.blogId = resp.data
               this.saveBlogDialogVisibleChild = false
               this.formEdit = false

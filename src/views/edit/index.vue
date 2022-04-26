@@ -16,8 +16,14 @@
           <span v-if="edit">清空</span>
           <span v-else>删除</span>
         </el-button>
-        <el-button v-if="!edit" type="success" size="small" icon="el-icon-chat-line-square" @click="routeToNew">新文章</el-button>
-        <edit-form :load-blog="queryBlog" :blog.sync="blog" :edit.sync="edit" :save-blog-dialog-visible.sync="saveBlogDialogVisible" />
+        <el-button v-if="!edit" type="success" size="small" icon="el-icon-chat-line-square" @click="routeToNew">新文章
+        </el-button>
+        <edit-form
+          :load-blog="queryBlog"
+          :blog.sync="blog"
+          :edit.sync="edit"
+          :save-blog-dialog-visible.sync="saveBlogDialogVisible"
+        />
       </div>
       <div class="blog-edit-title-t">
         <el-input
@@ -41,6 +47,7 @@ import $ from '../../../public/editor.md-master/jquery.min'
 import { resize, config } from './editor.js'
 import EditForm from '@/views/edit/form/index'
 import { queryBlog } from '@/api/blog/blog'
+
 export default {
   components: { EditForm },
   data() {
@@ -56,10 +63,10 @@ export default {
         tags: [],
         categories: [],
         provenance: '0',
-        isPublish: true,
-        content: {
-          type: 0,
-          content: ''
+        isPublish: 0,
+        blogContent: {
+          content: '',
+          editorType: 0
         }
       },
       edit: true
@@ -147,20 +154,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#blog-edit{
+#blog-edit {
   height: 100%;
   overflow: hidden;
 }
-.blog-edit{
-  &-title-t{
-    overflow:hidden;
+
+.blog-edit {
+  &-title-t {
+    overflow: hidden;
     height: 40px;
   }
-  &-title-op{
+
+  &-title-op {
     float: right;
     height: 40px;
     line-height: 40px;
-    margin:0 10px;
+    margin: 0 10px;
   }
 }
 </style>

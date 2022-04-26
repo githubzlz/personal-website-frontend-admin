@@ -148,8 +148,11 @@ export default {
   methods: {
     queryBlogList() {
       const param = {
-        page: this.page,
-        param: this.params
+        pageInfo: {
+          pageNum: this.page.currentPage,
+          pageSize: this.page.pageSize
+        },
+        params: this.params
       }
       queryBlogList(param).then(resp => {
         this.blogList = resp.data.list

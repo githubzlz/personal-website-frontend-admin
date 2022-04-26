@@ -45,13 +45,13 @@
       <el-collapse v-model="tagCateShow" accordion>
         <template v-for="(cate,i) in tagTree">
           <el-collapse-item v-if="cate.show" :key="cate.id" :title="cate.name" :name="i">
-            <template v-for="tag in cate.children">
+            <template v-for="tag in cate.tags">
               <el-tag
                 v-if="tag.show"
                 :key="tag.id"
                 effect="plain"
                 size="small"
-                style="margin-right: 10px; cursor: pointer"
+                style="margin-right: 10px; cursor: pointer; margin-top: 10px"
                 @click="addTag(tag.id)"
               >
                 {{ tag.name }}
@@ -129,13 +129,10 @@ export default {
         this.tagTree = resp.data
         if (this.tagTree) {
           this.tagTree.forEach(cate => {
-            if (cate.children) {
-              cate.children.forEach(tag => {
+            if (cate.tags) {
+              cate.tags.forEach(tag => {
                 cate.show = true
-                tag.show = true
-                if (this.tagIds.indexOf(tag.id) !== -1) {
-                  tag.show = false
-                }
+                tag.show = this.tagIds.indexOf(tag.id) === -1
                 this.tagMap.set(tag.id, tag.name)
               })
             }
@@ -148,22 +145,20 @@ export default {
       this.updateTagShowState(tagId, true)
     },
     addTag(tagId) {
-      console.log(this.tagMap)
       if (this.tagIds.indexOf(tagId) === -1) {
         this.tagIds.push(tagId)
       }
       this.updateTagShowState(tagId, false)
-      console.log(this.tagIds)
     },
     updateTagShowState(id, op) {
       this.tagTree.forEach(cate => {
         let show = false
-        if (cate.children) {
-          for (let i = 0; i < cate.children.length; i++) {
-            if (cate.children[i].id === id) {
-              cate.children[i].show = op
+        if (cate.tags) {
+          for (let i = 0; i < cate.tags.length; i++) {
+            if (cate.tags[i].id === id) {
+              cate.tags[i].show = op
             }
-            if (cate.children[i].show === true) {
+            if (cate.tags[i].show === true) {
               show = true
             }
           }

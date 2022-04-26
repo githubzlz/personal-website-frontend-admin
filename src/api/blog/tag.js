@@ -9,7 +9,7 @@ const baseUrl = process.env.VUE_APP_BLOG_BASE_API
  */
 export function queryTagList(data) {
   return request({
-    url: `${baseUrl}/tag/list`,
+    url: `${baseUrl}/tag/query-by-name`,
     method: 'post',
     data
   })

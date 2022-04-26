@@ -20,7 +20,7 @@
               :remote-method="remoteTagMethod"
               :loading="loading.tagLoading"
             >
-              <el-option v-for="(item,i) in categoryList" :key="i" :label="item.name" :value="item.id" />
+              <el-option v-for="(item,i) in tagList" :key="i" :label="item.name" :value="item.id" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -48,7 +48,7 @@
         <el-col :span="14">
           <el-form-item label="创建时间:" prop="tags">
             <el-date-picker
-              v-model="pParams.data"
+              v-model="pParams.date"
               style="width: 100%;"
               :picker-options="pickerOptions"
               type="datetimerange"
@@ -60,7 +60,7 @@
         </el-col>
         <el-col :span="10">
           <el-form-item label="文章来源:" prop="categories">
-            <el-checkbox-group v-model="pParams.provenance" size="small">
+            <el-checkbox-group v-model="provenance" size="small" :max="1">
               <el-checkbox-button v-for="item in provenanceList" :key="item.value" :label="item.value">{{ item.name }}</el-checkbox-button>
             </el-checkbox-group>
           </el-form-item>
@@ -99,6 +99,7 @@ export default {
   },
   data() {
     return {
+      provenance: [],
       categoryList: [],
       tagList: [],
       provenanceList: arr,
@@ -107,7 +108,7 @@ export default {
         provenance: 0,
         categories: [],
         tags: [],
-        data: [],
+        date: [],
         all: ''
       },
       loading: {
@@ -143,21 +144,19 @@ export default {
       }
     }
   },
+  watch: {
+    provenance: function(n, o) {
+      this.params.provenance = n[0]
+    }
+  },
   created() {
-    queryCategoryList().then(resp => {
-      this.categoryList = resp.data
-      this.loading.cateLoading = false
-    })
-    queryTagList().then(resp => {
-      this.tagList = resp.data
-      this.loading.tagLoading = false
-    })
+
   },
   methods: {
     remoteCategoryMethod(query) {
       if (query !== '') {
         this.loading.cateLoading = true
-        queryCategoryList().then(resp => {
+        queryCategoryList({ name: query }).then(resp => {
           this.categoryList = resp.data
           this.loading.cateLoading = false
         })
@@ -168,7 +167,7 @@ export default {
     remoteTagMethod(query) {
       if (query !== '') {
         this.loading.tagLoading = true
-        queryTagList().then(resp => {
+        queryTagList({ name: query }).then(resp => {
           this.tagList = resp.data
           this.loading.tagLoading = false
         })
@@ -177,8 +176,15 @@ export default {
       }
     },
     queryBlogList() {
-      this.$emit('update:params', this.pParams)
-      console.log(this.pParams)
+      const param = {
+        title: this.pParams.title,
+        provenance: this.pParams.provenance,
+        categories: this.pParams.categories,
+        tags: this.pParams.tags,
+        date: this.pParams.date,
+        all: this.pParams.all
+      }
+      this.$emit('update:params', param)
     }
   }
 }
